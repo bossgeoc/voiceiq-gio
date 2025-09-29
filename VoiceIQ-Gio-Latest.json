@@ -1,0 +1,933 @@
+{
+  "name": "VoiceIQ-Gio-Latest",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "voiceiq-v3-incoming",
+        "options": {}
+      },
+      "id": "99e7f348-dae8-4027-a65a-46426a51a62a",
+      "name": "Twilio Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -3712,
+        432
+      ],
+      "webhookId": "034d2443-a740-4ea2-80eb-8e00ad4e8552"
+    },
+    {
+      "parameters": {
+        "functionCode": "const body = items[0].json.body || items[0].json;\n\n// Filter out interim results - only process final transcriptions\nif (body.interim === true) {\n  return [];\n}\n\n// Ensure correct extraction of callSid and text\nreturn [{\n  json: {\n    callSid: body.callSid || '',\n    text: body.text || '',  // Use 'text' directly from the body\n    timestamp: new Date().toISOString()\n  }\n}];\n"
+      },
+      "id": "44556c75-4d77-4f67-a4cb-1ae8b378cb37",
+      "name": "Extract Call Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -3488,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1ujwgRPA9Jh3ABniVXGEkBSFRtfjJmFsRyLREycx7pW8",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "674817714",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "b56a7d3e-3ed6-46ed-bd86-1d4afa4a6367",
+      "name": "Get Conversation History",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        -3712,
+        1216
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "237VvRFUsNBgF5hy",
+          "name": "Google Service Account - Trend Micro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{($json.data && $json.data.length) ? $json.data.length : 0}}",
+              "operation": "equal"
+            }
+          ]
+        }
+      },
+      "id": "f3fb0ce7-9a5a-4ee0-a076-cefc95fe00df",
+      "name": "IF - History Empty?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -3488,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ujwgRPA9Jh3ABniVXGEkBSFRtfjJmFsRyLREycx7pW8",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "674817714",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "e5cbdad2-4723-4c8d-8098-7e644cfb5831",
+      "name": "Seed History Headers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        -3264,
+        1136
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "237VvRFUsNBgF5hy",
+          "name": "Google Service Account - Trend Micro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1ujwgRPA9Jh3ABniVXGEkBSFRtfjJmFsRyLREycx7pW8",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "704370296",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "8211e2ee-1a11-4d1e-8d4a-1f5af1216aec",
+      "name": "Get Activation Codes",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        -3040,
+        1216
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "237VvRFUsNBgF5hy",
+          "name": "Google Service Account - Trend Micro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{($json.data && $json.data.length) ? $json.data.length : 0}}",
+              "operation": "equal"
+            }
+          ]
+        }
+      },
+      "id": "3f11f0b2-4e8c-4991-b542-e298694e1141",
+      "name": "IF - Activation Empty?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -2816,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ujwgRPA9Jh3ABniVXGEkBSFRtfjJmFsRyLREycx7pW8",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "704370296",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "d7c82183-ef88-4dc0-90ec-19467958950a",
+      "name": "Seed Activation Headers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        -2592,
+        1216
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "237VvRFUsNBgF5hy",
+          "name": "Google Service Account - Trend Micro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "sttText",
+              "value": "={{$json.text || ''}}"
+            },
+            {
+              "name": "callSid",
+              "value": "={{$json.callSid || ''}}"
+            },
+            {
+              "name": "text",
+              "value": "={{$json.text || ''}}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{new Date().toISOString()}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1b7866f7-2b8e-4dde-b1c5-69dee3af0eff",
+      "name": "Add Timestamp",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        -3040,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "const raw = items[0].json?.choices?.[0]?.message?.content ?? null;\nconst userText = (items[0].json.text || items[0].json.sttText || \"\").toLowerCase();\n\nlet parsed;\ntry { parsed = raw ? JSON.parse(raw) : null; } catch { parsed = null; }\n\nlet safe = {\n  action: parsed?.action || \"respond\",\n  response: parsed?.response || \"I can help you with that.\",\n  emailType: parsed?.emailType || \"\"\n};\n\n// Handle new conversation flow actions\nif (safe.action === \"getName\") {\n  safe.response = safe.response || \"Hi! I'm Gio from Trend Micro support. May I please have your name?\";\n} else if (safe.action === \"getEmail\") {\n  safe.response = safe.response || \"Thank you! And could you please provide your email address so I can look up your account?\";\n}\n\n// Guardrail: handle renew/renewal even if GPT says \"repeat\"\nconst mentionsRenew = /\\brenew|renewal|extend|expired\\b/.test(userText);\nif (mentionsRenew && safe.action === \"repeat\") {\n  safe = {\n    action: \"respond\",\n    response: \"I can help you renew. Please sign in to your Trend Micro account, open Billing or Subscriptions, and select Renew. Tell me when you're on that screen and I'll guide you.\",\n    emailType: \"\"\n  };\n}\n\n// Extract email address from user text (original case, not lowercase)\nconst originalText = items[0].json.text || items[0].json.sttText || \"\";\nconst emailRegex = /\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b/;\nconst emailMatch = originalText.match(emailRegex);\nconst customerEmail = emailMatch ? emailMatch[0] : (items[0].json.customerEmail || \"\");\n\nreturn [{\n  json: {\n    callSid: items[0].json.callSid || items[0].json.CallSid || \"\",\n    text: items[0].json.text || \"\",\n    customerEmail: customerEmail || items[0].json.customerEmail || \"\",\n    gptResponse: safe\n  }\n}];\n"
+      },
+      "id": "a1185d5b-cbe3-4e4c-a9a6-c3f76a23428f",
+      "name": "Parse GPT Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -2368,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.gptResponse && $json.gptResponse.action ? $json.gptResponse.action : 'respond'}}",
+              "value2": "respond"
+            }
+          ]
+        }
+      },
+      "id": "f46c2fb7-6367-469c-9ff0-a4a4a4835938",
+      "name": "IF - Email Action?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -2144,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1ujwgRPA9Jh3ABniVXGEkBSFRtfjJmFsRyLREycx7pW8",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "0",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "376ddda7-39a2-4924-8638-a50908783097",
+      "name": "Get Email Templates",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        -1920,
+        416
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "237VvRFUsNBgF5hy",
+          "name": "Google Service Account - Trend Micro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const emailType = $json.gptResponse?.emailType || 'purchase';\nconst rows = $json.data || [];\nlet template = 'Default template';\nfor (const r of rows) {\n  if (Array.isArray(r) && r[0] === emailType) { template = r[1] || 'Default template'; break; }\n  else if (r.Type === emailType) { template = r.Template || 'Default template'; break; }\n}\n// Add caseId only if escalation\nif ($json.gptResponse?.action === 'escalate' && $json.caseId) {\n  template += `\\n\\nCase Reference: ${$json.caseId}`;\n}\nreturn [{ json: Object.assign({}, $json, { emailTemplate: template }) }];"
+      },
+      "id": "076fbab8-13e0-4fa1-9e23-a5376522364e",
+      "name": "Find Email Template",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -1696,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "subject": "VoiceIQ Support - {{$json.gptResponse && $json.gptResponse.emailType ? $json.gptResponse.emailType.charAt(0).toUpperCase() + $json.gptResponse.emailType.slice(1) : 'Support'}}",
+        "text": "={{$json.emailTemplate || 'Thank you for contacting VoiceIQ support.'}}",
+        "to": "={{$json.customerEmail || 'gyrald.reyh@gmail.com'}}",
+        "options": {}
+      },
+      "id": "2e08d2fa-c1f4-46d7-aa1d-fb65574f5b53",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -1472,
+        416
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "SMTP_CREDENTIAL_ID",
+          "name": "Gmail SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.gptResponse && $json.gptResponse.action ? $json.gptResponse.action : 'respond'}}",
+              "value2": "activation"
+            }
+          ]
+        }
+      },
+      "id": "c82a8586-e845-4331-ab73-c53437be5e19",
+      "name": "IF - Activation Action?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -2144,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Generate 4 random uppercase letters\nfunction randomLetters(len) {\n  const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\";\n  let result = \"\";\n  for (let i = 0; i < len; i++) {\n    result += chars.charAt(Math.floor(Math.random() * chars.length));\n  }\n  return result;\n}\n\n// Generate 16 random digits, split into 4 groups of 4\nfunction randomNumberGroups() {\n  let result = [];\n  for (let i = 0; i < 4; i++) {\n    let block = \"\";\n    for (let j = 0; j < 4; j++) {\n      block += Math.floor(Math.random() * 10);\n    }\n    result.push(block);\n  }\n  return result.join(\"-\");\n}\n\nreturn [\n  {\n    json: {\n      ActivationCode: `${randomLetters(4)}-${randomNumberGroups()}`\n    }\n  }\n];\n"
+      },
+      "id": "1dc1208d-e002-45d5-9421-d390f574258f",
+      "name": "Generate Activation Code",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -1920,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ujwgRPA9Jh3ABniVXGEkBSFRtfjJmFsRyLREycx7pW8",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "704370296",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "3bede326-afe8-4ead-a2ea-b0a7d2afd46e",
+      "name": "Save Activation Code",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        -1696,
+        720
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "237VvRFUsNBgF5hy",
+          "name": "Google Service Account - Trend Micro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.gptResponse && $json.gptResponse.action ? $json.gptResponse.action : 'respond'}}",
+              "value2": "escalate"
+            }
+          ]
+        }
+      },
+      "id": "0cd524eb-24b6-4059-a5ad-ddca8ef0b576",
+      "name": "IF - Escalate Action?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -2144,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "const caseId = 'CASE-' + Math.random().toString(36).substring(2, 8).toUpperCase();\nconst description = items[0].json.sttText || 'Customer inquiry';\nreturn [{ json: Object.assign({}, items[0].json, { caseId: caseId, caseDescription: description }) }];"
+      },
+      "id": "56542ebf-7ae7-444c-8296-4f0ca0591564",
+      "name": "Generate Case ID",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -1920,
+        912
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "3831ece1-1ad2-49d8-aed0-04299693c244",
+      "name": "Merge All Responses",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        -1248,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "let finalResponse = items[0].json.gptResponse?.response || 'Thank you for calling VoiceIQ support.';\nif (items[0].json.activationCode) {\n  finalResponse += ` Your activation code is: ${items[0].json.activationCode}`;\n}\nif (items[0].json.caseId) {\n  finalResponse += ` Your case ID is ${items[0].json.caseId}. Please keep this for reference.`;\n  if (items[0].json.gptResponse?.action === 'escalate') {\n    finalResponse += ` Our team will follow up with you soon.`;\n  }\n}\nreturn [{ json: Object.assign({}, items[0].json, { finalResponse }) }];"
+      },
+      "id": "2e29d083-7357-4e22-b37b-a91a4ef5bc18",
+      "name": "Build Final Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ujwgRPA9Jh3ABniVXGEkBSFRtfjJmFsRyLREycx7pW8",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "674817714",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "5f422bcb-4316-45db-a9fa-f51ddab70647",
+      "name": "Save Conversation",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        -800,
+        480
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "237VvRFUsNBgF5hy",
+          "name": "Google Service Account - Trend Micro"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const conversationId = 'CONV-' + Math.random().toString(36).substring(2, 10).toUpperCase();\nreturn [{ json: Object.assign({}, items[0].json, { conversationId }) }];"
+      },
+      "id": "7eb21152-ce06-4ddf-9c95-ab849460cf08",
+      "name": "Generate Conversation ID",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -3264,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/AC761a128a0f6f0b750cef62da254bcd0f/Calls/{{$json.callSid}}.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Twiml",
+              "value": "={{ `<Response><Say voice=\\\"Polly.Matthew\\\">` + ($json.say || $json.text || 'Okay.') + `</Say><Start><Stream url=\\\"wss://twilio-ws-relay-app-dubmdfahcwechqa3.eastus2-01.azurewebsites.net/twilio\\\" track=\\\"inbound\\\"/></Start><Pause length=\\\"60\\\"/></Response>` }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "5f6d8481-61e5-48c0-956d-5a46e0deb72d",
+      "name": "Twilio Call Update",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -2144,
+        96
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "7IN1W1TV88GivVxu",
+          "name": "Twilio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5605c9e9-647e-483f-ba16-25d820658d61",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -1920,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "const gptResponse = items[0].json.gptResponse?.response || 'Thank you for calling VoiceIQ support.'; return [{json:{say: gptResponse, text: items[0].json.text || '', callSid: items[0].json.callSid || ''}}];"
+      },
+      "id": "c6e64e26-1db8-418d-8d68-0d4529464bcf",
+      "name": "Build Voice Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -2592,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ !!($json.say) }}"
+            }
+          ]
+        }
+      },
+      "id": "05e7a5dc-f54f-4cbf-90d4-1b6f59549294",
+      "name": "IF Final (no interim)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -2368,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "requestMethod": "POST",
+        "url": "https://gyral-mfexremk-northcentralus.cognitiveservices.azure.com/openai/deployments/VoiceIQ-Gio-gpt-4o/chat/completions?api-version=2025-01-01-preview",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "={\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are Gio, the AI phone support assistant for Trend Micro, designed to provide friendly, clear, and accurate help to customers over the phone. Your role is to act like a professional yet approachable support representative, guiding customers step by step in solving their issues.\\n\\nOutput ONLY valid JSON:\\n{\\\"action\\\":\\\"respond|email|activation|escalate|getName|getEmail|close\\\",\\\"response\\\":\\\"<what Gio should say>\\\",\\\"emailType\\\":\\\"purchase|renewal|installation|update|support|\\\"}\\n\\nKey Rules:\\n- Always keep responses concise, polite, and conversational, suitable for spoken interaction\\n- Use simple, clear sentences that are easy to understand when spoken out loud\\n- Respond naturally to casual conversation and greetings\\n- Confirm customer intent before proceeding with solutions\\n- Provide instructions step-by-step, allowing the customer time to follow\\n- If the customer is confused, repeat or simplify the instructions\\n- Never use technical jargon unless absolutely necessary, and explain terms when used\\n- Always maintain a supportive, patient, and approachable tone\\n\\nConversation Flow:\\n1. First interaction: Ask for customer's name (action: \\\"getName\\\")\\n2. After getting name: Ask for email address (action: \\\"getEmail\\\")\\n3. Then proceed with support\\n\\nNote: Opening and closing scripts are handled by server.js/Twilio, not by this prompt\\n\\nNatural Responses:\\n- For greetings like \\\"How are you?\\\": Respond warmly but briefly, then ask for their name if not collected yet\\n- For casual conversation: Be friendly but gently guide toward support needs\\n- Don't repeat full introductions if already established in conversation\\n\\nSpelling Clarification:\\n- If unsure about name or email spelling from speech-to-text, ask for phonetic spelling\\n- For emails: \\\"Could you spell that email address for me, letter by letter?\\\"\\n- For names: \\\"Could you spell your name for me to make sure I have it right?\\\"\\n- Be especially careful with email addresses before sending emails\\n\\nTrend Micro Knowledge Base:\\n- Main website: trendmicro.com\\n- Download page: trendmicro.com/download\\n- Account portal: account.trendmicro.com\\n- Support page: helpcenter.trendmicro.com\\n- For software downloads: Direct customers to trendmicro.com/download or their account portal\\n- For account issues: Direct to account.trendmicro.com\\n- For installation help: Offer to email installation guide or walk through steps\\n\\nScope of Support:\\n- Assist with resetting or recovering Trend Micro accounts\\n- Provide instructions for installing or updating security software\\n- Guide customers to correct download pages\\n- Answer questions related to billing, subscriptions, or product features\\n- For cases outside scope: politely inform and escalate (action: \\\"escalate\\\")\\n\\nExample Responses for Common Requests:\\n- Download request: \\\"I can help you download the software. Please visit trendmicro.com/download, or if you have an account, sign in to account.trendmicro.com where you'll find your licensed products.\\\"\\n- Installation help: \\\"I'll guide you through the installation. First, have you downloaded the installer from trendmicro.com/download or your account portal?\\\"\\n- Account access: \\\"Let's get you back into your account. Please go to account.trendmicro.com and click 'Forgot Password' if needed.\\\"\\n- Greeting response: \\\"I'm doing well, thank you for asking! May I have your name please?\\\"\\n- Email spelling: \\\"Could you spell that email address for me, letter by letter? I want to make sure I send this to the right place.\\\"\\n- Name spelling: \\\"Could you spell your name for me to make sure I have it right?\\\"\\n- Opening: \\\"Hi! My name is Gio from Trend Micro Support. How can I assist you today?\\\"\\n- Closing: \\\"Thank you for calling Trend Micro and have a great day!\\\"\\n\\nSpecial Actions:\\n- getName → Ask for customer's name\\n- getEmail → Ask for customer's email\\n- activation → Generate activation code\\n- email → Send email with relevant information\\n- escalate → Transfer to human agent\\n- close → End the call with closing message and hang up\\n- respond → Continue conversation\\n\\nClosing Scenarios:\\n- When customer says \\\"thanks\\\", \\\"goodbye\\\", \\\"that's all\\\", or indicates they're done\\n- When support issue is resolved and customer has no more questions\\n- Use action: \\\"close\\\" with response: \\\"Thank you for calling Trend Micro and have a great day!\\\"\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"={{$json.text || ''}}\"\n    }\n  ],\n  \"temperature\": 0.1,\n  \"top_p\": 0.9,\n  \"max_tokens\": 200,\n  \"response_format\": { \"type\": \"json_object\" }\n}\n"
+      },
+      "id": "c2606e32-9ad8-4461-9e07-eb688f7ac8c1",
+      "name": "Azure GPT - Gio Logic",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        -2816,
+        208
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "33oOOlcfWUmGeJUc",
+          "name": "Azure GPT - Gio Logic"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "mergeByIndex",
+        "join": "inner"
+      },
+      "id": "9f82b00c-e48c-45c4-95d7-89d680838fc7",
+      "name": "Merge GPT + Context",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 1,
+      "position": [
+        -2592,
+        720
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Twilio Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract Call Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Call Data": {
+      "main": [
+        [
+          {
+            "node": "Generate Conversation ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Conversation History": {
+      "main": [
+        [
+          {
+            "node": "IF - History Empty?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - History Empty?": {
+      "main": [
+        [
+          {
+            "node": "Seed History Headers",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Activation Codes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Seed History Headers": {
+      "main": [
+        [
+          {
+            "node": "Get Activation Codes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Activation Codes": {
+      "main": [
+        [
+          {
+            "node": "IF - Activation Empty?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Activation Empty?": {
+      "main": [
+        [
+          {
+            "node": "Seed Activation Headers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Timestamp": {
+      "main": [
+        [
+          {
+            "node": "Azure GPT - Gio Logic",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge GPT + Context",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Parse GPT Response": {
+      "main": [
+        [
+          {
+            "node": "IF - Email Action?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF - Activation Action?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF - Escalate Action?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Voice Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Email Action?": {
+      "main": [
+        [
+          {
+            "node": "Get Email Templates",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge All Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Email Templates": {
+      "main": [
+        [
+          {
+            "node": "Find Email Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Email Template": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Merge All Responses",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "IF - Activation Action?": {
+      "main": [
+        [
+          {
+            "node": "Generate Activation Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Activation Code": {
+      "main": [
+        [
+          {
+            "node": "Save Activation Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Escalate Action?": {
+      "main": [
+        [
+          {
+            "node": "Generate Case ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge All Responses": {
+      "main": [
+        [
+          {
+            "node": "Build Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Final Response": {
+      "main": [
+        [
+          {
+            "node": "Save Conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Conversation ID": {
+      "main": [
+        [
+          {
+            "node": "Add Timestamp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Twilio Call Update": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Azure GPT - Gio Logic": {
+      "main": [
+        [
+          {
+            "node": "Merge GPT + Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Voice Response": {
+      "main": [
+        [
+          {
+            "node": "Twilio Call Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Final (no interim)": {
+      "main": [
+        [
+          {
+            "node": "Twilio Call Update",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge GPT + Context": {
+      "main": [
+        [
+          {
+            "node": "Parse GPT Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a7784dfe-78a4-4164-84be-124f99096b7b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b6eba5dcbc1c8bf4039492672b05f0d4d4eb3b1b4440e5c187daae6e7b4bb050"
+  },
+  "id": "GUOdnxcAolG5EsKE",
+  "tags": []
+}
