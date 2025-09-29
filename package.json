@@ -1,0 +1,17 @@
+{
+  "name": "twilio-azure-stt-relay",
+  "version": "1.0.3",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "microsoft-cognitiveservices-speech-sdk": "^1.38.0",
+    "node-fetch": "^3.3.2",
+    "ws": "^8.17.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}
