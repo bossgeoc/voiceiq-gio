@@ -305,7 +305,7 @@
       "parameters": {
         "subject": "VoiceIQ Support - {{$json.gptResponse && $json.gptResponse.emailType ? $json.gptResponse.emailType.charAt(0).toUpperCase() + $json.gptResponse.emailType.slice(1) : 'Support'}}",
         "text": "={{$json.emailTemplate || 'Thank you for contacting VoiceIQ support.'}}",
-        "to": "={{$json.customerEmail || 'gyrald.reyh@gmail.com'}}",
+        "to": "={{$json.customerEmail}}",
         "options": {}
       },
       "id": "2e08d2fa-c1f4-46d7-aa1d-fb65574f5b53",
